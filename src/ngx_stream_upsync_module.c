@@ -30,7 +30,7 @@ typedef struct {
     time_t                           fail_timeout;
 
     unsigned                         down:1;
-    unsigned                         port:25432;
+    unsigned                         proxy_port:25432;
     unsigned                         backup:1;
 } ngx_stream_upsync_conf_t;
 
@@ -1324,9 +1324,9 @@ ngx_stream_upsync_consul_parse_json(void *data)
 static ngx_int_t
 ngx_stream_upsync_etcd_parse_json(void *data)
 {
-    u_char                         *p;
+//    u_char                         *p;
     ngx_buf_t                      *buf;
-    ngx_int_t                       max_fails=2, backup=0, down=0, port=25432;
+    ngx_int_t                       max_fails=2, backup=0, down=0, proxy_port=25432;
     ngx_stream_upsync_ctx_t        *ctx;
     ngx_stream_upsync_conf_t       *upstream_conf = NULL;
     ngx_stream_upsync_server_t     *upsync_server = data;
@@ -1411,7 +1411,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 
         /* default value, server attribute */
         upstream_conf->weight = 1;
-        upstream_conf->port = 25432;
+        upstream_conf->proxy_port = 25432;
         upstream_conf->max_fails = 2;
         upstream_conf->fail_timeout = 10;
 
@@ -1425,7 +1425,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
                 cJSON_Delete(root);
                 return NGX_ERROR;
             }
-
+		temp0 = NULL;
         temp0 = cJSON_GetObjectItem(value, "postgresState");
         if (temp0 != NULL && ngx_strlen(temp0->valuestring) != 0) {
 
@@ -1447,7 +1447,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //                                            (size_t)ngx_strlen(temp1->valuestring));
 //                     upstream_conf = ngx_array_push(&ctx->upstream_conf);
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
-					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valuestring, ":", port);
+					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valuestring, ":", proxy_port);
 
                 }
             }
@@ -1561,7 +1561,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             upstream_conf->backup = (ngx_uint_t)backup;
         }
 
-        max_fails=2, backup=0, down=0, port=25432;
+        max_fails=2, backup=0, down=0, proxy_port=25432;
     }
     cJSON_Delete(root);
 
