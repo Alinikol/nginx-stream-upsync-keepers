@@ -1452,7 +1452,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             }
             temp1 = NULL;
 
-            cJSON *temp1 = cJSON_GetObjectItem(sub_attribute, "generation");
+           temp1 = cJSON_GetObjectItem(sub_attribute, "generation");
                         if (temp1 != NULL) {
 
                             if (temp1->valuestring != NULL) {
