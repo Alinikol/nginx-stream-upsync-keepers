@@ -1,4 +1,4 @@
-ngx_addon_name=ngx_stream_upsync_module
+ngx_addon_name=ngx_stream_upsync_keepers_module
 
 ngx_feature_libs="-lm"
 
