@@ -917,8 +917,7 @@ ngx_stream_upsync_add_filter(ngx_cycle_t *cycle,
 
 
 static ngx_int_t
-ngx_stream_upsync_del_peers(ngx_cycle_t *cycle,
-    ngx_stream_upsync_server_t *upsync_server)
+ngx_stream_upsync_del_peers(ngx_cycle_t *cycle, ngx_stream_upsync_server_t *upsync_server)
 {
     ngx_uint_t                       i, n=0, w=0, len=0;
     ngx_array_t                     *servers;
@@ -1495,12 +1494,10 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             temp1 = cJSON_GetObjectItem(sub_attribute, "healthy");
             if (temp1 != NULL) {
                     
-                if (temp1->valueint != 0) {
-                    down = temp1->valueint;
-
-                } else if (temp1->valuestring != NULL) {
-                    down = ngx_atoi((u_char *)temp1->valuestring, 
-                                    (size_t)ngx_strlen(temp1->valuestring));
+                if (temp1->valueint != false) {
+                    down = 0;
+                } else {
+                    down = 1;
                 }
             }
             temp1 = NULL;
