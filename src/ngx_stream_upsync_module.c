@@ -28,9 +28,9 @@ typedef struct {
     ngx_int_t                        weight;
     ngx_uint_t                       max_fails;
     time_t                           fail_timeout;
+	ngx_int_t                         proxy_port;
 
     unsigned                         down:1;
-    unsigned                         proxy_port:25432;
     unsigned                         backup:1;
 } ngx_stream_upsync_conf_t;
 
