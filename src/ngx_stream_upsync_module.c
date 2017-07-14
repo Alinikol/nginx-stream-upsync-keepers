@@ -1411,7 +1411,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 
         /* default value, server attribute */
         upstream_conf->weight = 1;
-        upstream_conf->proxy_port = 25432;
+        upstream_conf->proxy_port = 254324;
         upstream_conf->max_fails = 2;
         upstream_conf->fail_timeout = 10;
 
