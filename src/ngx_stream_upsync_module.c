@@ -380,7 +380,7 @@ ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
 					p = (u_char *)s.data;
 					upsync_port  = ngx_atoi(p + 1, s.data - p - 1);
-        			upsync_port  = s.data;
+//        			upsync_port  = s.data;
                       if (upsync_port < 1 || upsync_port > 65535) {
                                  ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
                                                     "upsync_server: upsync_port invalid para");
