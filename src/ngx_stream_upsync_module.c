@@ -357,7 +357,7 @@ static ngx_upsync_conf_t  ngx_upsync_types[] = {
 static char *
 ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-//    u_char                             *p = NULL;
+    u_char                             *p = NULL;
     time_t                              upsync_timeout = 0, upsync_interval = 0;
     ngx_int_t							upsync_port = 0;
     ngx_str_t                          *value, s;
@@ -378,6 +378,8 @@ ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
                     s.len = value[i].len - 12;
                     s.data = &value[i].data[12];
 
+					p = (u_char *)s.data;
+					upsync_port  = ngx_atoi(p + 1, s.data - p - 1);
         			upsync_port  = s.data;
                       if (upsync_port < 1 || upsync_port > 65535) {
                                  ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
