@@ -751,8 +751,7 @@ ngx_stream_upsync_check_index(ngx_stream_upsync_server_t *upsync_server)
 
 
 static ngx_int_t
-ngx_stream_upsync_add_peers(ngx_cycle_t *cycle,
-    ngx_stream_upsync_server_t *upsync_server)
+ngx_stream_upsync_add_peers(ngx_cycle_t *cycle,  ngx_stream_upsync_server_t *upsync_server)
 {
     ngx_uint_t                       i=0, n=0, w=0, len=0;
     ngx_array_t                     *servers;
@@ -1424,15 +1423,13 @@ ngx_stream_upsync_etcd_parse_json(void *data)
                 cJSON_Delete(root);
                 return NGX_ERROR;
             }
-		temp0 = NULL;
-        temp0 = cJSON_GetObjectItem(value, "postgresState");
-        if (temp0 != NULL && ngx_strlen(temp0->valuestring) != 0) {
 
-            cJSON *sub_attribute = cJSON_Parse((char *)temp0->valuestring);
+        cJSON *postgres_state = cJSON_GetObjectItem(value, "postgresState");
+        if (postgres_state != NULL && ngx_strlen(postgres_state->valuestring) != 0) {
+
+            cJSON *sub_attribute = cJSON_Parse((char *)postgres_state->valuestring);
             if (sub_attribute == NULL) {
-                ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0,
-                              "etcd_upsync_parse_json: \'%s\' is invalid",
-                              temp0->valuestring);
+                ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0,"etcd_upsync_parse_json: \'%s\' is invalid", postgres_state->valuestring);
                 continue;
             }
 
@@ -1440,12 +1437,14 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             cJSON *temp1 = cJSON_GetObjectItem(sub_attribute, "listenAddress");
             if (temp1 != NULL) {
 
+			ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0, "listenAddress: \'%s\' is invalid", temp1->valuestring);
+
                 if (temp1->valuestring != NULL) {
 //                    upstream_conf->sockaddr = ngx_atoi((u_char *)temp1->valuestring,
 //                                            (size_t)ngx_strlen(temp1->valuestring));
 //                     upstream_conf = ngx_array_push(&ctx->upstream_conf);
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
-					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valuestring, ":", proxy_port);
+					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
 
                 }
             }
@@ -1455,8 +1454,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
                         if (temp1 != NULL) {
 
                             if (temp1->valuestring != NULL) {
-                                upstream_conf->weight = ngx_atoi((u_char *)temp1->valuestring,
-                                                        (size_t)ngx_strlen(temp1->valuestring));
+                                upstream_conf->weight = ngx_atoi((u_char *)temp1->valuestring, (size_t)ngx_strlen(temp1->valuestring));
 
                             } else if (temp1->valueint >= 0) {
                                 upstream_conf->weight = temp1->valueint;
@@ -1698,10 +1696,10 @@ ngx_stream_upsync_addrs(ngx_pool_t *pool, u_char *sockaddr)
     if (port_p == NULL) {
         ngx_log_error(NGX_LOG_ERR, pool->log, 0, 
                       "upsync_addrs: has no port in %s", p);
-        return NULL;
+        //return NULL;
     }
 
-    port = ngx_atoi(port_p + 1, last - port_p - 1);
+    port = 25432;//ngx_atoi(port_p + 1, last - port_p - 1);
     if (port < 1 || port > 65535) {
         ngx_log_error(NGX_LOG_ERR, pool->log, 0, 
                       "upsync_addrs: invalid port in %s", p);
@@ -2329,8 +2327,7 @@ ngx_stream_upsync_parse_dump_file(ngx_stream_upsync_server_t *upsync_server)
     ngx_stream_upsync_add_filter((ngx_cycle_t *)ngx_cycle, upsync_server);
     if (ctx->add_upstream.nelts > 0) {
 
-        if (ngx_stream_upsync_add_peers((ngx_cycle_t *)ngx_cycle, 
-                                       upsync_server) != NGX_OK) {
+        if (ngx_stream_upsync_add_peers((ngx_cycle_t *)ngx_cycle,  upsync_server) != NGX_OK) {
             ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0,
                           "upsync_parse_dump_file: upstream add server error");
             return NGX_ERROR;
