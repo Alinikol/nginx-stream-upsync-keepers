@@ -1324,7 +1324,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 {
 //    u_char                         *p;
     ngx_buf_t                      *buf;
-    ngx_int_t                       max_fails=2, backup=0, down=0, proxy_port=25432;
+    ngx_int_t                       max_fails=2, backup=0, down=0;//, proxy_port=25432;
     ngx_stream_upsync_ctx_t        *ctx;
     ngx_stream_upsync_conf_t       *upstream_conf = NULL;
     ngx_stream_upsync_server_t     *upsync_server = data;
