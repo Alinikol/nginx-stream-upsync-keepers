@@ -1462,8 +1462,8 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //                							"listenAddress: \'%s\' is invalid",
 //                							temp1->valuestring);
 
-                 ngx_log_debug1(NGX_LOG_DEBUG,ngx_cycle->log, 0,
-                                           "listenAddress: \'%s\' is invalid",temp1->valuestring);
+//                 ngx_log_debug1(NGX_LOG_DEBUG,ngx_cycle->log, 0,
+//                                           "listenAddress: \'%s\' is invalid",temp1->valuestring);
 
 //                if (temp1->valuestring != NULL) {
 //                    max_fails = ngx_atoi((u_char *)temp1->valuestring,
