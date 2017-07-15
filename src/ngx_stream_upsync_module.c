@@ -1403,7 +1403,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //            ngx_sprintf(upstream_conf->sockaddr, "%*s", ngx_strlen(p + 1), p + 1);
 //        }
          upstream_conf = ngx_array_push(&ctx->upstream_conf);
-         ngx_memzero(upstream_conf, sizeof(*upstream_conf));
+                  ngx_memzero(upstream_conf, sizeof(*upstream_conf));
 
 //        temp0 = NULL;
 
@@ -1445,7 +1445,8 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //                     upstream_conf = ngx_array_push(&ctx->upstream_conf);
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
 //					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
-					upstream_conf->sockaddr = temp1->valueint
+//					upstream_conf->sockaddr = temp1->valueint
+					ngx_sprintf(upstream_conf->sockaddr, "%*s", 0, temp1->valueint);
                 }
             }
             temp1 = NULL;
