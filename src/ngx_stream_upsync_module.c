@@ -1693,6 +1693,9 @@ ngx_stream_upsync_addrs(ngx_pool_t *pool, u_char *sockaddr)
     p = sockaddr;
     last = p + ngx_strlen(p);
 
+ngx_log_error(NGX_LOG_ERR, pool->log, 0,  "upsync_addrs: sockaddr %s", p);
+
+
     port_p = ngx_strlchr(p, last, ':');
     if (port_p == NULL) {
         ngx_log_error(NGX_LOG_ERR, pool->log, 0, 
