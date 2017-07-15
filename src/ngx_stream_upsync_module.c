@@ -357,8 +357,9 @@ static ngx_upsync_conf_t  ngx_upsync_types[] = {
 static char *
 ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 {
-    u_char                             *p = NULL;
+//    u_char                             *p = NULL;
     time_t                              upsync_timeout = 0, upsync_interval = 0;
+    ngx_int_t							upsync_port = 0;
     ngx_str_t                          *value, s;
     ngx_url_t                           u;
     ngx_uint_t                          i, strong_dependency = 0;
@@ -367,11 +368,25 @@ ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     value = cf->args->elts;
 
-    upscf = ngx_stream_conf_get_module_srv_conf(cf,
-                                                ngx_stream_upsync_module);
+    upscf = ngx_stream_conf_get_module_srv_conf(cf, ngx_stream_upsync_module);
     conf_server = &upscf->conf_server;
 
     for (i = 2; i < cf->args->nelts; i++) {
+
+		if (ngx_strncmp(value[i].data, "upsync_port=", 12) == 0) {
+
+                    s.len = value[i].len - 12;
+                    s.data = &value[i].data[12];
+
+        			upsync_port  = s.data;
+                      if (upsync_port < 1 || upsync_port > 65535) {
+                                 ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
+                                                    "upsync_server: upsync_port invalid para");
+                                 goto invalid;
+                             }
+
+                               continue;
+                }
 
         if (ngx_strncmp(value[i].data, "upsync_timeout=", 15) == 0) {
 
@@ -441,6 +456,9 @@ ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
         goto invalid;
     }
 
+    if (upsync_port != 0) {
+        upscf->upsync_port = upsync_port;
+    }
     if (upsync_interval != 0) {
         upscf->upsync_interval = upsync_interval;
     }
@@ -458,36 +476,36 @@ ngx_stream_upsync_server(ngx_conf_t *cf, ngx_command_t *cmd, void *conf)
 
     ngx_memzero(&u, sizeof(ngx_url_t));
 
-    p = (u_char *)ngx_strchr(value[1].data, '/');
-    if (p == NULL) {
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "upsync_server: "
-                           "please input conf_server upstream key in upstream");
-        return NGX_CONF_ERROR;
-    }
-    upscf->upsync_send.data = p;
-    upscf->upsync_send.len = value[1].len - (p - value[1].data);
-
-    u.url.data = value[1].data;
-    u.url.len = p - value[1].data;
-
-    p = (u_char *)ngx_strchr(value[1].data, ':');
-    if (p != NULL) {
-        upscf->upsync_host.data = value[1].data;
-        upscf->upsync_host.len = p - value[1].data;
-
-        upscf->upsync_port = ngx_atoi(p + 1, upscf->upsync_send.data - p - 1);
-        if (upscf->upsync_port < 1 || upscf->upsync_port > 65535) {
-            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "upsync_server: "
-                               "conf server port is invalid");
-            return NGX_CONF_ERROR;
-        }
-
-    } else {
-        upscf->upsync_host.data = value[1].data;
-        upscf->upsync_host.len = u.url.len;
-
-        upscf->upsync_port = 80;
-    }
+//    p = (u_char *)ngx_strchr(value[1].data, '/');
+//    if (p == NULL) {
+//        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "upsync_server: "
+//                           "please input conf_server upstream key in upstream");
+//        return NGX_CONF_ERROR;
+//    }
+//    upscf->upsync_send.data = p;
+//    upscf->upsync_send.len = value[1].len - (p - value[1].data);
+//
+//    u.url.data = value[1].data;
+//    u.url.len = p - value[1].data;
+//
+//    p = (u_char *)ngx_strchr(value[1].data, ':');
+//    if (p != NULL) {
+//        upscf->upsync_host.data = value[1].data;
+//        upscf->upsync_host.len = p - value[1].data;
+//
+//        upscf->upsync_port = ngx_atoi(p + 1, upscf->upsync_send.data - p - 1);
+//        if (upscf->upsync_port < 1 || upscf->upsync_port > 65535) {
+//            ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, "upsync_server: "
+//                               "conf server port is invalid");
+//            return NGX_CONF_ERROR;
+//        }
+//
+//    } else {
+//        upscf->upsync_host.data = value[1].data;
+//        upscf->upsync_host.len = u.url.len;
+//
+//        upscf->upsync_port = 80;
+//    }
 
     u.default_port = 80;
     if (ngx_parse_url(cf->pool, &u) != NGX_OK) {
@@ -1446,7 +1464,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
 //					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
 //					upstream_conf->sockaddr = temp1->valueint
-					ngx_sprintf(upstream_conf->sockaddr, "%*s", 0, temp1->valueint);
+					ngx_sprintf(upstream_conf->sockaddr, "%*s", ngx_strlen(temp1->valueint+1), temp1->valueint+1);
                 }
             }
             temp1 = NULL;
