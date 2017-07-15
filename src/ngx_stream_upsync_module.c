@@ -1391,7 +1391,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
     cJSON *server_next;
     for (server_next = nodes->child; server_next != NULL; server_next = server_next->next)
     {
-        cJSON *temp0 = cJSON_GetObjectItem(server_next, "key");
+//        cJSON *temp0 = cJSON_GetObjectItem(server_next, "key");
 //        if (temp0 != NULL && temp0->valuestring != NULL) {
 ////            if (ngx_stream_upsync_check_key((u_char *)temp0->valuestring, upsync_server->host) != NGX_OK) {
 ////                continue;
@@ -1492,7 +1492,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             temp1 = cJSON_GetObjectItem(sub_attribute, "healthy");
             if (temp1 != NULL) {
                     
-                if (temp1->valueint != false) {
+                if (temp1->valueint == 1) {
                     down = 0;
                 } else {
                     down = 1;
