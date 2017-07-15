@@ -1426,7 +1426,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
                 continue;
             }
 
-           temp11 =  cJSON_GetObjectItem(sub_attribute_value, "postgresState");
+           cJSON * temp11 =  cJSON_GetObjectItem(sub_attribute_value, "postgresState");
 
             cJSON *sub_attribute = cJSON_Parse((char *)temp11->valuestring);
 			if (sub_attribute == NULL) {
