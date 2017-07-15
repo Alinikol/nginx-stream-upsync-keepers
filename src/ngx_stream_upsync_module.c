@@ -1444,8 +1444,8 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //                                            (size_t)ngx_strlen(temp1->valuestring));
 //                     upstream_conf = ngx_array_push(&ctx->upstream_conf);
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
-					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
-
+//					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
+					upstream_conf->sockaddr = temp1->valueint
                 }
             }
             temp1 = NULL;
