@@ -1458,6 +1458,10 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 				ngx_memzero(upstream_conf, sizeof(*upstream_conf));
 				ngx_sprintf(upstream_conf->sockaddr, "%*s", ngx_strlen(p + 1), p + 1);
 
+				ngx_log_error(NGX_LOG_ERR, ngx_cycle->log, 0,
+                							"listenAddress: \'%s\' is invalid",
+                							temp1->valuestring);
+
 //                if (temp1->valuestring != NULL) {
 //                    max_fails = ngx_atoi((u_char *)temp1->valuestring,
 //                                         (size_t)ngx_strlen(temp1->valuestring));
