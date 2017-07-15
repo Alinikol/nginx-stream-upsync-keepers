@@ -1556,7 +1556,7 @@ ngx_stream_upsync_etcd_parse_json(void *data)
             upstream_conf->backup = (ngx_uint_t)backup;
         }
 
-        max_fails=2, backup=0, down=0, proxy_port=25432;
+        max_fails=2, backup=0, down=0;//, proxy_port=25432;
     }
     cJSON_Delete(root);
 
