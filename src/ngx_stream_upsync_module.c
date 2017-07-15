@@ -1340,7 +1340,7 @@ ngx_stream_upsync_consul_parse_json(void *data)
 static ngx_int_t
 ngx_stream_upsync_etcd_parse_json(void *data)
 {
-//    u_char                         *p;
+    u_char                         *p;
     ngx_buf_t                      *buf;
     ngx_int_t                       max_fails=2, backup=0, down=0;//, proxy_port=25432;
     ngx_stream_upsync_ctx_t        *ctx;
@@ -1464,7 +1464,9 @@ ngx_stream_upsync_etcd_parse_json(void *data)
 //					ngx_memzero(upstream_conf, sizeof(*upstream_conf));
 //					ngx_sprintf(upstream_conf->sockaddr, "%*s", temp1->valueint, ":", proxy_port);
 //					upstream_conf->sockaddr = temp1->valueint
-					ngx_sprintf(upstream_conf->sockaddr,  (u_char *)temp1->valueint));
+					p = (u_char *)temp1->valueint;
+					ngx_sprintf(upstream_conf->sockaddr, "%*s", ngx_strlen(p + 1), p + 1);
+//					ngx_sprintf(upstream_conf->sockaddr,  temp1->valueint);
                 }
             }
             temp1 = NULL;
